@@ -1,0 +1,123 @@
+@model Website_QuanLyKhoHangThucPham.ViewModels.ProductViewModel
+@{
+    ViewData["Title"] = "Sửa sản phẩm";
+}
+<div class="sc-card" style="max-width:820px;">
+    <div class="card-header"><i class="fa fa-pen me-2" style="color:var(--sc-orange);"></i>Chỉnh sửa: @Model.Name</div>
+    <div class="p-4">
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+
+            @if (!string.IsNullOrEmpty(Model.ExistingVideoUrl))
+            {
+                <div class="mb-3">
+                    <div class="text-muted small mb-1">Video hiện tại</div>
+                    <video src="@Model.ExistingVideoUrl" controls style="width:200px;border-radius:8px;background:#000;"></video>
+                </div>
+            }
+
+
+            @if (Model.ExistingImageUrl != null)
+            {
+                <div class="mb-3 d-flex align-items-center gap-3">
+                    <img src="@Model.ExistingImageUrl" id="previewImg"
+                         style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #eee;" />
+
+                    @if (!string.IsNullOrEmpty(Model.ExistingImageUrls))
+                    {
+                        @foreach (var u in Model.ExistingImageUrls.Split(',', StringSplitOptions.RemoveEmptyEntries).Skip(1))
+                        {
+                            <img src="@u" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid #eee;" />
+                        }
+                    }
+
+                    <div class="text-muted small">
+                        <div>Ảnh hiện tại</div>
+                        <div class="text-info small">Chọn ảnh mới bên dưới để thay thế</div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="mb-3">
+                    <div id="previewContainer" class="d-flex flex-wrap gap-2"></div>
+                </div>
+            }
+
+            <div class="row g-3">
+                <div class="col-md-8"><label asp-for="Name" class="form-label"></label><input asp-for="Name" class="form-control" /></div>
+                <div class="col-md-4"><label asp-for="SKU" class="form-label"></label><input asp-for="SKU" class="form-control" /></div>
+                <div class="col-md-6">
+                    <label asp-for="CategoryId" class="form-label"></label>
+                    @Html.DropDownListFor(m => m.CategoryId, (Microsoft.AspNetCore.Mvc.Rendering.SelectList)ViewBag.Categories, "-- Chọn danh mục --", new { @class = "form-select" })
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="SupplierId" class="form-label"></label>
+                    @Html.DropDownListFor(m => m.SupplierId, (Microsoft.AspNetCore.Mvc.Rendering.SelectList)ViewBag.Suppliers, "-- Chọn NCC --", new { @class = "form-select" })
+                </div>
+                <div class="col-md-3"><label asp-for="Unit" class="form-label"></label><input asp-for="Unit" class="form-control" /></div>
+                <div class="col-md-3"><label asp-for="MinStockLevel" class="form-label"></label><input asp-for="MinStockLevel" class="form-control" type="number" /></div>
+                <div class="col-md-3"><label asp-for="CostPrice" class="form-label"></label><input asp-for="CostPrice" class="form-control" type="number" step="1000" max="10000000" /></div>
+                <div class="col-md-3"><label asp-for="SellPrice" class="form-label"></label><input asp-for="SellPrice" class="form-control" type="number" step="1000" max="10000000" /></div>
+                <div class="col-md-3">
+                    <label asp-for="StockQuantity" class="form-label"></label>
+                    <input asp-for="StockQuantity" class="form-control" type="number" placeholder="0"/>
+                    <div class="form-text">Tồn kho hiện tại: <strong>@(ViewBag.CurrentStock ?? (object)"—") @Model.Unit</strong> — nhập số &gt; 0 để cộng thêm</div>
+                </div>
+                <div class="col-md-3"><label asp-for="StockExpiryDate" class="form-label"></label><input asp-for="StockExpiryDate" class="form-control" type="date"/></div>
+                <div class="col-md-8"><label asp-for="Description" class="form-label"></label><textarea asp-for="Description" class="form-control" rows="2"></textarea></div>
+                <div class="col-md-4">
+                    <label class="form-label">Đổi ảnh (tuỳ chọn)</label>
+                    <input id="imgInput" name="ImageFiles" type="file" accept="image/*,video/mp4,video/quicktime,video/x-msvideo" multiple>
+                    <div id="previewContainer" class="d-flex flex-wrap gap-2 mt-2"></div>
+                </div>
+            </div>
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-sc-primary"><i class="fa fa-save me-1"></i>Cập nhật</button>
+                <a asp-action="Index" class="btn btn-sc-outline">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('imgInput').addEventListener('change', function() {
+            const container = document.getElementById('previewContainer');
+            container.innerHTML = '';
+            let fileList = Array.from(this.files);
+
+            const render = () => {
+                container.innerHTML = '';
+                fileList.forEach((file, i) => {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        const wrap = document.createElement('div');
+                        wrap.style.cssText = 'position:relative;display:inline-block;';
+                        wrap.innerHTML = `
+                            <img src="${e.target.result}"
+                                 style="width:70px;height:70px;object-fit:cover;border-radius:6px;border:2px solid ${i===0?'#2196F3':'#eee'};"
+                                 title="${file.name}"/>
+                            ${i===0?'<span style="position:absolute;bottom:2px;left:2px;background:#2196F3;color:#fff;font-size:.6rem;padding:1px 4px;border-radius:3px;">Chính</span>':''}
+                            <button type="button" onclick="removePreview(${i})"
+                                style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#e53935;color:#fff;border:none;font-size:10px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+                        `;
+                        container.appendChild(wrap);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            window.removePreview = function(idx) {
+                fileList.splice(idx, 1);
+                const dt = new DataTransfer();
+                fileList.forEach(f => dt.items.add(f));
+                document.getElementById('imgInput').files = dt.files;
+                render();
+            };
+
+            render();
+        });
+    </script>
+}

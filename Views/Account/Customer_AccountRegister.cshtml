@@ -1,0 +1,206 @@
+@model Website_QuanLyKhoHangThucPham.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Đăng ký tài khoản";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Đăng ký — DokiDoki</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+            body {
+                background: linear-gradient(135deg,#1e2a3a 0%,#2d4059 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                padding: 20px 0;
+            }
+
+            .register-box {
+                max-width: 480px;
+                width: 100%;
+                margin: auto;
+            }
+
+            .card {
+                border: none;
+                border-radius: 18px;
+                box-shadow: 0 24px 60px rgba(0,0,0,.3);
+            }
+
+            .card-header {
+                background: linear-gradient(135deg,#1976D2,#0D47A1);
+                border-radius: 18px 18px 0 0;
+                padding: 24px 30px;
+                text-align: center;
+            }
+
+            .card-body {
+                padding: 28px 32px;
+            }
+
+            .btn-register {
+                background: linear-gradient(135deg,#4fc3f7,#0288d1);
+                border: none;
+                font-weight: 600;
+            }
+
+            .form-control:focus {
+                box-shadow: 0 0 0 3px rgba(79,195,247,.2);
+                border-color: #4fc3f7;
+            }
+
+            .login-link {
+                text-align: center;
+                margin-top: 14px;
+                font-size: .85rem;
+                color: #999;
+            }
+
+                .login-link a {
+                    color: #4fc3f7;
+                    text-decoration: none;
+                    font-weight: 600;
+                }
+
+                    .login-link a:hover {
+                        text-decoration: underline;
+                    }
+
+            .divider {
+                display: flex;
+                align-items: center;
+                text-align: center;
+                margin: 20px 0;
+                color: #999;
+            }
+
+                .divider::before, .divider::after {
+                    content: '';
+                    flex: 1;
+                    border-bottom: 1px solid #e0e0e0;
+                }
+
+                .divider span {
+                    padding: 0 10px;
+                    font-size: .85rem;
+                }
+
+            .btn-google {
+                width: 100%;
+                padding: 12px 20px;
+                border: 2px solid #ddd;
+                border-radius: 8px;
+                background: white;
+                color: #333;
+                font-size: 15px;
+                font-weight: 500;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                transition: all 0.3s;
+            }
+
+                .btn-google:hover {
+                    border-color: #4285f4;
+                    background: #f8f9fa;
+                    box-shadow: 0 2px 8px rgba(66,133,244,0.2);
+                }
+
+                .btn-google img {
+                    width: 20px;
+                    height: 20px;
+                }
+    </style>
+</head>
+<body>
+    <div class="register-box px-3">
+        <div class="card">
+            <div class="card-header">
+                <i class="fa fa-user-plus fa-2x text-info mb-3"></i>
+                <h4 class="text-white fw-bold mb-1">Tạo tài khoản mới</h4>
+                <p class="text-white-50 small mb-0">DokiDoki Food Store</p>
+            </div>
+            <div class="card-body">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger py-2 small"><div asp-validation-summary="All"></div></div>
+                }
+
+                <form asp-action="RegisterCustomer" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label asp-for="FullName" class="form-label fw-semibold small"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-user text-muted"></i></span>
+                                <input asp-for="FullName" class="form-control" placeholder="Nguyễn Văn A" />
+                            </div>
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Email" class="form-label fw-semibold small"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-envelope text-muted"></i></span>
+                                <input asp-for="Email" class="form-control" placeholder="email@example.com" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="PhoneNumber" class="form-label fw-semibold small"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-phone text-muted"></i></span>
+                                <input asp-for="PhoneNumber" class="form-control" placeholder="0901234567" />
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Password" class="form-label fw-semibold small"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-lock text-muted"></i></span>
+                                <input asp-for="Password" class="form-control" placeholder="Tối thiểu 8 ký tự" />
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ConfirmPassword" class="form-label fw-semibold small"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-lock text-muted"></i></span>
+                                <input asp-for="ConfirmPassword" class="form-control" placeholder="Nhập lại mật khẩu" />
+                            </div>
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <input type="hidden" asp-for="Role" value="Customer" />
+                    <button type="submit" class="btn btn-register btn-primary w-100 py-2 text-white mt-4">
+                        <i class="fa fa-user-plus me-2"></i>Đăng ký
+                    </button>
+                </form>
+                <div class="divider">
+                    <span>hoặc</span>
+                </div>
+
+                <a asp-action="LoginWithGoogle" asp-route-returnUrl="@Url.Action("Index", "Store")" class="btn-google text-decoration-none">
+                    <img src="https://www.google.com/favicon.ico" alt="Google"/>
+                    Tiếp tục với Google
+                </a>
+
+                <div class="login-link mt-3">
+                    Đã có tài khoản? <a asp-action="Login">Đăng nhập ngay</a>
+                </div>
+            </div>
+        </div>
+        <p class="text-center text-white-50 small mt-3">© 2026 Vương Đoàn Đức Anh — 23DTHB6</p>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>
